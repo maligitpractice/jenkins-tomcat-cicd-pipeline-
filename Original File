@@ -1,0 +1,165 @@
+1.	Jenkins creation
+Create EC2 Instances:
+ Property: OS – Ubuntu
+	      Instance type – m7i-flex.large
+                    8 GB RAM
+                    30 GB Storage
+Login using putty 
+1.	ubuntu
+2.	sudo su –
+3.	apt-get update -y
+4.	sudo apt update
+
+Install Java
+
+5.	sudo apt install fontconfig openjdk-21-jre
+6.	java -version
+
+Install Jenkins
+1.	https://www.jenkins.io/doc/book/installing/linux/ steps available in this site
+2.	echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+3.	sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+
+4.	sudo apt update
+5.	sudo apt install Jenkins
+
+copay server IP address and with :8080 paste it in browser
+before that add 8080 with security group
+
+Copy the file path from the Jenkins home page and paste it in ubuntu machine
+
+Cat /var/lib/jenkins/secrets/initialAdminPassword
+Copy the password from ubuntu and paste it in the Jenkins
+Mali
+Malimar@123
+ 
+
+Select Install suggested plugins
+ 
+
+ 
+
+ 
+
+I am going to deploy a job (with application) from Jenkins to tomcat (middleware).
+I have both Jenkins and tomcat in my same ec2 machine
+
+ 
+Tomcat Installation -> https://tomcat.apache.org/download-90.cgi
+ Copy the tar link and paste it in ubunty using wget command
+
+Wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.120/bin/apache-tomcat-9.0.120.tar.gz.asc
+
+Untar the file using  - > tar -xvzf <filename>
+
+Go to the apache file folder -> cd apache-tomcat-9.0.120/
+ls
+cd conf/
+ls
+vi server.xml to change the port number from 8080 since Jenkins and tomcat should not be in same port number
+ 
+
+Cd ..
+Cd bin/
+Ls
+./startup.sh     to start the tomcat
+ 
+
+Now copy the instance IP and paste it in browser with :8081
+
+ 
+
+ 
+Go to Jenkins settings plugins
+To learn more about plugins go to https://plugins.jenkins.io/
+
+Go to Jenkins and in available plugins sear for “deploy to container” and install it
+
+ 
+
+Go to home page and select new item
+
+Groovy file for pipeline creation:
+
+ 
+ 
+Select freestyle project and put some name “autodeplyment” and click ok to create new project
+
+ 
+
+Go to Environment and click Add build step
+Click execute shell command
+ 
+Now click build Now 
+ 
+Now go to ubuntu and come back from tomcat folders till root folder and go to cd /var/lib/Jenkins/workspace/ -> Jenkins job default path
+Ls
+Now you can see the new job which you created in Jenkins
+Cd <newjobname>
+Now install an application into this
+Search for sample application for tomcat open the apache folder and copy the source code and paste it in ubuntu using “wget https://tomcat.apache.org/tomcat-6.0-doc/appdev/sample/sample.war”
+ 
+
+Now we are going to do this job using Jenkins plugin 
+Go to Jenkins and configuration
+Post build actions
+ 
+ 
+Now we need to set a user credentials for that we need to go to ubuntu
+And go to apache folder cd
+Cd apache-tomcat-9.0.120
+Go to cd conf
+Vi tomcat-user.xml
+Near version=”1.0” paste below code
+
+<role rolename="manager-gui"/>
+   <role rolename="manager-script"/>
+   <role rolename="manager-jmx"/>
+   <role rolename="manager-status"/>
+   <user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+   <user username="deployer" password="deployer" roles="manager-script"/>
+ 
+
+
+Cd ..
+Cd webapps/
+Cd manager/
+Cd meta-inf/
+Ls
+Vi context.xml
+Comment the below mentioned class to avoid existing bug
+
+ 
+Cd ../ ../
+Cd ..
+Since I have done some system level changes, I need to restart the tomcat
+Ls
+Cd bin/
+./shutdown.sh
+./startup.sh
+ 
+Now go to jenkin console
++Add – Global
+ 
+
+User name “deployer” password “deployer” (as per the code we have writer while tomcat configuration)
+Then create
+ 
+ 
+Apply and save
+Build now  - new deployment will be happen and go to console output to see what happened
+
+ 
+Now go to tomcat website and add /sample/ to see our application is running in tomcat
+
+ 
+
+Now check with ubuntu tomcat folder webapps you can see sample.war file which was previously in the Jenkins
+ 
+This was actually done by Jenkins plugin “deply to container”
+
+
+http://18.188.36.226:8080/job/autodeplyment/3/console
