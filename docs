@@ -1,0 +1,28 @@
+CI/CD Pipeline Project Documentation
+Project: Deploying a Sample WAR Application from Jenkins to Apache Tomcat on AWS EC2
+
+Objective
+Create a Jenkins Freestyle job to deploy a sample WAR application to Apache Tomcat using the Deploy to Container plugin.
+Architecture
+AWS EC2 (Ubuntu) hosts Jenkins and Apache Tomcat. Jenkins builds/deploys sample.war to Tomcat Manager.
+Prerequisites
+Ubuntu EC2 (8GB RAM,30GB), Java 21, Jenkins, Apache Tomcat 9, Security Groups (8080 Jenkins,8081 Tomcat).
+Implementation Steps
+1. Launch Ubuntu EC2 and update packages.
+2. Install Java and verify.
+3. Install Jenkins and complete initial setup.
+4. Install Apache Tomcat, change connector port to 8081, start Tomcat.
+5. Install Jenkins 'Deploy to Container' plugin.
+6. Create a Freestyle project.
+7. Download sample.war into Jenkins workspace.
+8. Configure Tomcat users with manager-script role.
+9. Configure Tomcat Manager context and restart Tomcat.
+10. Add Jenkins credentials (deployer/deployer).
+11. Configure Post-build Action -> Deploy war/ear to container.
+12. Build the job and verify deployment at http://<EC2-IP>:8081/sample/.
+Validation
+Successful build in Jenkins console and sample application accessible through Tomcat.
+Outcome
+Automated deployment from Jenkins to Apache Tomcat using Jenkins Deploy to Container plugin.
+Notes
+Replace hard-coded IP addresses and passwords with placeholders or secrets before publishing to GitHub.
